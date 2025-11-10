@@ -44,4 +44,18 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     },
   ],
+  preview: {
+    select: {
+      title: 'title',
+      logo: 'logo',
+    },
+    prepare({title, logo}) {
+      const titleText = title?.[0]?.children?.[0]?.text || 'Configurações'
+      return {
+        title: 'Configurações',
+        subtitle: titleText,
+        media: logo,
+      }
+    },
+  },
 })

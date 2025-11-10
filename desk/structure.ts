@@ -12,6 +12,10 @@ const deskStructure = (S: StructureBuilder) =>
         .id('logoCarousel')
         .schemaType('logoCarousel')
         .title('Logo Carousel'),
+      S.documentListItem()
+        .id('heroBanner')
+        .schemaType('heroBanner')
+        .title('Hero Banner (Reel)'),
       S.divider(),
       S.listItem()
         .title('Cases')

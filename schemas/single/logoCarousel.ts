@@ -27,5 +27,17 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     },
   ],
+  preview: {
+    select: {
+      logos: 'logos',
+    },
+    prepare({logos}) {
+      const count = logos?.length || 0
+      return {
+        title: 'Logo Carousel',
+        subtitle: `${count} logo${count !== 1 ? 's' : ''}`,
+        media: logos?.[0],
+      }
+    },
+  },
 })
-
