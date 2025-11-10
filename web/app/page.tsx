@@ -2,6 +2,7 @@ import './globals.css'
 import Image from 'next/image'
 import {createClient} from '@sanity/client'
 import groq from 'groq'
+import CasesGrid from './components/CasesGrid'
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '89ztrc1x',
@@ -10,40 +11,85 @@ const client = createClient({
   useCdn: true,
 })
 
-type SanityFile = {
-  asset: {url: string}
+// Helper function to render block content with formatting
+function renderBlockContent(blocks: any[]) {
+  if (!blocks || !blocks.length) return null
+  
+  return blocks[0]?.children?.map((child: any, index: number) => {
+    const text = child.text || ''
+    const marks = child.marks || []
+    
+    let content = text
+    
+    // Wrap with appropriate tags based on marks
+    if (marks.includes('strong')) {
+      return <strong key={index}>{content}</strong>
+    }
+    if (marks.includes('em')) {
+      return <em key={index}>{content}</em>
+    }
+    
+    return <span key={index}>{content}</span>
+  })
 }
 
 async function getData() {
-  const [hero, logos, servicos] = await Promise.all([
-    client.fetch(groq`*[_type=='homeHero'][0]{video{asset->{url}}, alt}`),
-    client.fetch(groq`*[_type=='homeLogoCarousel'][0]{logos[]{..., asset->}}`),
-    client.fetch(groq`*[_type=='homeServices'][0]{titulo, itens}`),
+  const [configuracoes, logoCarousel, heroBanner, cases] = await Promise.all([
+    client.fetch(groq`*[_type=='configuracoes'][0]{title, logo{asset->{url}}, favicon{asset->{url}}}`),
+    client.fetch(groq`*[_type=='logoCarousel'][0]{logos[]{..., asset->}}`),
+    client.fetch(groq`*[_type=='heroBanner'][0]{video{asset->{url}}, alt}`),
+    client.fetch(groq`*[_type=='cases']{
+      _id,
+      title,
+      tag,
+      paragrafo,
+      thumbnail{asset->{url}, alt},
+      videoPrincipal{asset->{url}}
+    }`),
   ])
-  return {hero, logos, servicos}
+  return {configuracoes, logoCarousel, heroBanner, cases}
 }
 
 export default async function HomePage() {
-  const {hero, logos, servicos} = await getData()
+  const {configuracoes, logoCarousel, heroBanner, cases} = await getData()
 
   return (
     <main style={{padding: 24, display: 'grid', gap: 48}}>
       <section>
-        <h2 style={{marginBottom: 12}}>Hero Banner</h2>
-        {hero?.video?.asset?.url ? (
-          <video src={hero.video.asset.url} autoPlay muted loop playsInline style={{width: '100%', border: '1px solid #333'}} />
+        <h2 style={{marginBottom: 12}}>Hero Banner (Reel)</h2>
+        {heroBanner?.video?.asset?.url ? (
+          <video 
+            src={heroBanner.video.asset.url} 
+            autoPlay 
+            muted 
+            loop 
+            playsInline 
+            style={{width: '100%', border: '1px solid #333'}} 
+          />
         ) : (
           <p>Sem vídeo</p>
         )}
       </section>
 
       <section>
+        <h2 style={{marginBottom: 12}}>Configurações</h2>
+        {configuracoes?.title && (
+          <div>
+            <h3>Title: {renderBlockContent(configuracoes.title) || 'No title'}</h3>
+            {configuracoes?.logo?.asset?.url && (
+              <Image src={configuracoes.logo.asset.url} alt="Logo" width={200} height={100} style={{objectFit: 'contain'}} />
+            )}
+          </div>
+        )}
+      </section>
+
+      <section>
         <h2 style={{marginBottom: 12}}>Logo Carousel</h2>
         <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center'}}>
-          {logos?.logos?.length ? (
-            logos.logos.map((img: any, i: number) => (
+          {logoCarousel?.logos?.length ? (
+            logoCarousel.logos.map((img: any, i: number) => (
               img?.asset?.url ? (
-                <Image key={i} src={img.asset.url} alt={img.alt || ''} width={120} height={60} style={{objectFit: 'contain', filter: 'invert(1)'}} />
+                <Image key={i} src={img.asset.url} alt={img.alt || ''} width={120} height={60} style={{objectFit: 'contain'}} />
               ) : null
             ))
           ) : (
@@ -53,23 +99,9 @@ export default async function HomePage() {
       </section>
 
       <section>
-        <h2 style={{marginBottom: 4}}>Serviços</h2>
-        {servicos?.titulo ? <h3 style={{marginTop: 0, color: '#aaa'}}>{servicos.titulo}</h3> : null}
-        <div style={{display: 'grid', gap: 16}}>
-          {servicos?.itens?.length ? (
-            servicos.itens.map((b: any, i: number) => (
-              <div key={i} style={{border: '1px solid #333', padding: 16}}>
-                {b.subtitulo ? <strong>{b.subtitulo}</strong> : null}
-                {b.descricao ? <p style={{margin: '8px 0 0'}}>{b.descricao}</p> : null}
-              </div>
-            ))
-          ) : (
-            <p>Sem serviços</p>
-          )}
-        </div>
+        <h2 style={{marginBottom: 12}}>Cases</h2>
+        <CasesGrid cases={cases} />
       </section>
     </main>
   )
 }
-
-
