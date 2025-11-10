@@ -1,13 +1,7 @@
-import homeHero from './single/homeHero'
-import homeLogoCarousel from './single/homeLogoCarousel'
-import homeServices from './single/homeServices'
-import footerContactCard from './single/footerContactCard'
-import footerForm from './single/footerForm'
-import footerPrices from './single/footerPrices'
-import product from './documents/product'
-import caseDoc from './documents/case'
+import configuracoes from './single/configuracoes'
+import logoCarousel from './single/logoCarousel'
+import cases from './documents/cases'
 
-const schemas = [homeHero, homeLogoCarousel, homeServices, footerContactCard, footerForm, footerPrices, product, caseDoc]
+const schemas = [configuracoes, logoCarousel, cases]
 
 export default schemas
-
