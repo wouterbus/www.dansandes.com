@@ -1,4 +1,5 @@
 import {defineType} from 'sanity'
+import {videoOrGifFileOptions} from '../fields/videoOrGifFile'
 
 export default defineType({
   name: 'cases',
@@ -23,11 +24,10 @@ export default defineType({
     },
     {
       name: 'videoPrincipal',
-      title: 'Video Principal',
+      title: 'Video or GIF Principal',
       type: 'file',
-      options: {
-        accept: 'video/*',
-      },
+      options: videoOrGifFileOptions,
+      description: 'MP4/WebM video or animated GIF',
       validation: (Rule) => Rule.required(),
     },
     {
