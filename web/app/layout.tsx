@@ -1,5 +1,18 @@
 import {createClient} from '@sanity/client'
 import groq from 'groq'
+import './globals.css'
+import './hero.css'
+import './menu.css'
+import './conteudos.css'
+import './logos.css'
+import './parallax.css'
+import './cases-section.css'
+import './produtos.css'
+import './footer.css'
+import Header from './components/Header'
+import SplashScreen from './components/SplashScreen'
+import {montserrat, nomos} from './fonts'
+
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '89ztrc1x',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
@@ -10,7 +23,6 @@ const client = createClient({
 export async function generateMetadata() {
   const data = await client.fetch(groq`*[_type=='configuracoes'][0]{title, favicon{asset->{url}}}`)
   const faviconUrl = data?.favicon?.asset?.url
-  // Extract plain text from the portable text title (first block's first child)
   const titleText =
     data?.title?.[0]?.children?.[0]?.text?.trim?.() ||
     'Sandes'
@@ -22,16 +34,12 @@ export async function generateMetadata() {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="pt-br">
+    <html lang="pt-br" className={`${nomos.variable} ${montserrat.variable}`}>
       <body>
-        {/* Site Header */}
+        <SplashScreen />
         <Header />
         {children}
       </body>
     </html>
   )
 }
-
-// eslint-disable-next-line import/no-default-export
-import Header from './components/Header'
-

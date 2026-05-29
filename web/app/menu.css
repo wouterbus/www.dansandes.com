@@ -1,0 +1,116 @@
+/* —— Full-screen menu overlay —— */
+.site-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--color-menu-bg, var(--color-orange));
+  color: var(--color-text);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.4s;
+}
+
+.site-menu--open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.site-menu__nav {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-inline: var(--site-gutter);
+  padding-block: clamp(100px, 14vh, 140px);
+}
+
+.site-menu__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 1.2vh, 12px);
+  max-width: var(--site-max-width);
+  margin-inline: auto;
+}
+
+.site-menu__item {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.site-menu--open .site-menu__item {
+  animation: menu-link-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--menu-item-delay, 0s);
+}
+
+@keyframes menu-link-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.site-menu__link {
+  display: inline-block;
+  font-family: var(--font-title), sans-serif;
+  font-size: clamp(2.25rem, 7.5vw, 4.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.site-menu__link:hover {
+  opacity: 0.75;
+}
+
+.site-menu__credit {
+  position: absolute;
+  bottom: clamp(24px, 4vh, 40px);
+  left: var(--site-gutter);
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(0.7rem, 1.1vw, 0.8125rem);
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--color-text) 80%, var(--color-menu-bg, var(--color-orange)));
+  opacity: 0;
+}
+
+.site-menu__credit.creator-credit {
+  margin: 0;
+}
+
+.site-menu--open .site-menu__credit {
+  animation: menu-link-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+body.menu-open .site-header {
+  z-index: 300;
+}
+
+body.menu-open .site-header--hidden {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-menu__item,
+  .site-menu__credit {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+}

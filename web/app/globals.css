@@ -6,14 +6,249 @@
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
+:root {
+  /* Layout */
+  --site-max-width: 1440px;
+  --site-gutter: clamp(20px, 4vw, 64px);
+  --section-padding-y: clamp(64px, 10vh, 120px);
+  --section-gap-lg: clamp(56px, 8vh, 80px);
+  --section-gap-md: clamp(32px, 5vh, 48px);
+  --section-gap-sm: clamp(24px, 3vh, 36px);
+  --text-max-width: 520px;
+
+  /* Surfaces & text */
+  --color-bg-page: #2c2c2c;
+  --color-bg: var(--color-bg-page);
+  --color-text: #ffffff;
+
+  /* Brand palette (only accent colors) */
+  --color-red: #c92034;
+  --color-orange: #f1562b;
+  --color-yellow: #f69120;
+  --color-green: #76956c;
+  --color-purple: #9a489a;
+
+  /* Full-screen menu background (single brand color) */
+  --color-menu-bg: var(--color-orange);
+
+  --highlight-red: var(--color-red);
+  --highlight-orange: var(--color-orange);
+  --highlight-yellow: var(--color-yellow);
+  --highlight-green: var(--color-green);
+  --highlight-purple: var(--color-purple);
+
+  --text-muted: color-mix(in srgb, var(--color-text) 72%, var(--color-bg-page));
+}
+
+/* —— Typography —— */
 body {
-  background: #000;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--color-bg-page);
+  color: var(--color-text);
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-title), sans-serif;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 3.2vw, 3.25rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 2.8vw, 2.75rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+p {
+  margin: 0;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.35vw, 1.125rem);
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.text-highlight {
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.text-highlight--red {
+  color: var(--highlight-red);
+}
+
+.text-highlight--orange {
+  color: var(--highlight-orange);
+}
+
+.text-highlight--yellow {
+  color: var(--highlight-yellow);
+}
+
+.text-highlight--green {
+  color: var(--highlight-green);
+}
+
+.text-highlight--purple {
+  color: var(--highlight-purple);
+}
+
+/* —— Shared section shell —— */
+.section {
+  position: relative;
+  overflow: visible;
+  color: var(--color-text);
+}
+
+.section__content {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 3vh, 36px);
+  width: 100%;
+  max-width: var(--text-max-width);
+}
+
+.section__particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.section__decor {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: particle-fly-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes particle-fly-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--particle-from-x), var(--particle-from-y)) scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes particle-red-bottom-in {
+  from {
+    opacity: 0;
+    transform: translate(calc(-50% - 16px), calc(50% + 40px)) scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section__decor {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* —— Shared circular media —— */
+.circle-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+}
+
+.circle-media__ring {
+  position: absolute;
+  inset: -3%;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--color-text) 18%, var(--color-bg-page));
+  pointer-events: none;
+}
+
+.circle-media__fill {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-bg-page);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--color-purple) 28%, transparent);
+}
+
+.circle-media__fill--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 24px;
+}
+
+/* —— Splash —— */
+body.splash-active {
+  overflow: hidden;
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: auto;
+}
+
+.splash--out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash__logo {
+  width: clamp(88px, 18vw, 120px);
+  height: auto;
+}
+
+/* —— Layout utilities —— */
+.site-container {
+  width: 100%;
+  max-width: var(--site-max-width);
+  margin-inline: auto;
+  padding-inline: var(--site-gutter);
 }
 
 a {
@@ -32,4 +267,32 @@ strong {
 
 em {
   font-style: italic;
+}
+
+.page-main {
+  padding-block: clamp(48px, 8vh, 96px);
+}
+
+.page-section {
+  display: grid;
+  gap: 24px;
+}
+
+/* Mobile: one rhythm for gutters, section padding, and internal gaps */
+@media (max-width: 960px) {
+  :root {
+    --site-gutter: 24px;
+    --section-padding-y: 64px;
+    --section-gap-lg: 56px;
+    --section-gap-md: 32px;
+    --section-gap-sm: 24px;
+  }
+
+  .section__content {
+    gap: var(--section-gap-sm);
+  }
+
+  .page-main {
+    padding-block: var(--section-padding-y);
+  }
 }

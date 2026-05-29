@@ -1,0 +1,140 @@
+/* —— Cases grid & video modal —— */
+.cases-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--color-purple) 92%, var(--color-bg-page));
+}
+
+.cases-modal__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  padding: 12px 24px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 30%, var(--color-bg-page));
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+  color: var(--color-text);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.cases-modal__video {
+  max-width: 90%;
+  max-height: 90vh;
+  object-fit: contain;
+  border: 1px solid color-mix(in srgb, var(--color-text) 22%, var(--color-bg-page));
+}
+
+.cases-card {
+  border: 1px solid color-mix(in srgb, var(--color-text) 22%, var(--color-bg-page));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cases-card--clickable {
+  cursor: pointer;
+}
+
+.cases-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--color-bg-page);
+}
+
+.cases-card__media img {
+  object-fit: cover;
+}
+
+.cases-card__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-purple) 30%, transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.cases-card:hover .cases-card__overlay {
+  opacity: 1;
+}
+
+.cases-card__play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-text);
+  color: var(--color-purple);
+  font-size: 24px;
+}
+
+.cases-card__body {
+  padding: 16px;
+}
+
+.cases-card__tag {
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cases-card__title {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.cases-card__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.cases-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.cases-nav__btn {
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 22%, var(--color-bg-page));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.cases-nav__dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cases-nav__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-text) 35%, var(--color-bg-page));
+  cursor: pointer;
+}
+
+.cases-nav__dot--active {
+  background: var(--color-text);
+}
