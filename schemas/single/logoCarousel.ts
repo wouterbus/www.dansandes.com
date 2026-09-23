@@ -15,7 +15,7 @@ export default defineType({
           to: [{type: 'partnerLogo'}],
         },
       ],
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(1),
     },
   ],
   preview: {

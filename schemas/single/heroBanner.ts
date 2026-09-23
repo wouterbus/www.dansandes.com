@@ -1,47 +1,44 @@
 import {defineType} from 'sanity'
 import {headingTextField} from '../fields/headingText'
-import {videoOrGifFileOptions} from '../fields/videoOrGifFile'
+import {videoOrGifFileOptions, webPlayableVideo} from '../fields/videoOrGifFile'
 
 export default defineType({
   name: 'heroBanner',
-  title: 'Hero Banner (Reel)',
+  title: 'Banner hero (Reel)',
   type: 'document',
   fields: [
     {
       name: 'title',
-      title: 'H1 Title',
-      description:
-        'Select text and use “Highlight color” for bold colored words (red, orange, yellow, green, purple)',
+      title: 'Título H1',
       ...headingTextField,
     },
     {
       name: 'awards',
-      title: 'Awards',
+      title: 'Prêmios',
       type: 'image',
       options: {hotspot: true},
       fields: [
         {
           name: 'alt',
-          title: 'Alt Text',
+          title: 'Texto alternativo',
           type: 'string',
-          description: 'Describe the awards strip for accessibility',
+          description: 'Descreva a faixa de prêmios para acessibilidade.',
         },
       ],
     },
     {
       name: 'video',
-      title: 'Video or GIF',
+      title: 'Vídeo ou GIF',
       type: 'file',
       options: videoOrGifFileOptions,
-      description:
-        'MP4/WebM/MOV or animated GIF. If upload hangs, compress to MP4 (~5–15 MB) and retry. Large files (80 MB+) often time out in the browser.',
-      validation: (Rule) => Rule.required(),
+      description: 'MP4 (H.264), WebM ou GIF. Tamanho ideal: 1920px x 1920px — Quadrado.',
+      validation: (Rule) => [Rule.required(), webPlayableVideo(Rule)],
     },
     {
       name: 'alt',
-      title: 'Video Alt Text',
+      title: 'Texto alternativo do vídeo',
       type: 'string',
-      description: 'Describe the video content for accessibility',
+      description: 'Descreva o conteúdo do vídeo para acessibilidade.',
     },
   ],
   preview: {
@@ -51,9 +48,9 @@ export default defineType({
       awards: 'awards',
     },
     prepare({title, alt, awards}) {
-      const titleText = title?.[0]?.children?.[0]?.text || alt || 'Hero Banner (Reel)'
+      const titleText = title?.[0]?.children?.[0]?.text || alt || 'Banner hero (Reel)'
       return {
-        title: 'Hero Banner (Reel)',
+        title: 'Banner hero (Reel)',
         subtitle: titleText,
         media: awards,
       }

@@ -29,7 +29,6 @@ export default function LogoGrid({logos}: LogoGridProps) {
             <div
               className="logo-grid__circle"
               data-hover-color={color}
-              title={logo.alt || undefined}
             >
               <Image
                 src={logo.url!}

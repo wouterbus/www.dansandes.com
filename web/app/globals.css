@@ -32,8 +32,9 @@ body {
   --color-green: #76956c;
   --color-purple: #9a489a;
 
-  /* Full-screen menu background (single brand color) */
-  --color-menu-bg: var(--color-orange);
+  /* Full-screen menu overlay: neutral white with dark theme text */
+  --color-menu-bg: #ffffff;
+  --color-menu-text: var(--color-bg-page);
 
   --highlight-red: var(--color-red);
   --highlight-orange: var(--color-orange);
@@ -68,7 +69,7 @@ h6 {
 }
 
 h1 {
-  font-size: clamp(1.75rem, 3.2vw, 3.25rem);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
 }
 
 h2 {
@@ -127,7 +128,7 @@ p {
   flex-direction: column;
   gap: clamp(24px, 3vh, 36px);
   width: 100%;
-  max-width: var(--text-max-width);
+  max-width: 700px;
 }
 
 .section__particles {
@@ -213,6 +214,13 @@ p {
   padding: 24px;
 }
 
+/* Keep the message inside the circle rather than letting it run edge to edge */
+.circle-media__fill--empty > * {
+  max-width: 24ch;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
 /* —— Splash —— */
 body.splash-active {
   overflow: hidden;
@@ -251,6 +259,67 @@ body.splash-active {
   padding-inline: var(--site-gutter);
 }
 
+/* —— Shared circular icon button: menu toggle and overlay close —— */
+.circle-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--circle-toggle-bg, var(--color-orange));
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.circle-toggle:hover {
+  transform: scale(1.04);
+}
+
+.circle-toggle__line {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--circle-toggle-line, var(--color-text));
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.circle-toggle--close .circle-toggle__line:first-child {
+  transform: translateY(4.5px) rotate(45deg);
+}
+
+.circle-toggle--close .circle-toggle__line:last-child {
+  transform: translateY(-4.5px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circle-toggle,
+  .circle-toggle__line {
+    transition: none;
+  }
+
+  .circle-toggle:hover {
+    transform: none;
+  }
+}
+
+/* Opt-in heading break: desktop only, so narrow screens wrap naturally */
+.heading-break {
+  display: none;
+}
+
+@media (min-width: 961px) {
+  .heading-break {
+    display: block;
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -281,7 +350,7 @@ em {
 /* Mobile: one rhythm for gutters, section padding, and internal gaps */
 @media (max-width: 960px) {
   :root {
-    --site-gutter: 24px;
+    --site-gutter: clamp(32px, 8vw, 48px);
     --section-padding-y: 64px;
     --section-gap-lg: 56px;
     --section-gap-md: 32px;

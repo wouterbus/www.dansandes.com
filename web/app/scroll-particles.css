@@ -1,0 +1,69 @@
+.scroll-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scroll-particle {
+  position: absolute;
+  border-radius: 50%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.scroll-particle__motion {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  opacity: 1;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.scroll-particles--entering .scroll-particle--revealing {
+  opacity: 0;
+  animation: particle-reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--particle-reveal-delay, 0ms);
+}
+
+.scroll-particles--ready .scroll-particle {
+  opacity: 1;
+  filter: none;
+}
+
+@keyframes particle-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 960px) {
+  .scroll-particles {
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-particles--entering .scroll-particle--revealing {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .scroll-particle__motion {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

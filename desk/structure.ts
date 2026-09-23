@@ -15,10 +15,7 @@ const deskStructure = (S: StructureBuilder) =>
       S.documentListItem()
         .id('conteudosSection')
         .schemaType('conteudosSection')
-        .title('Conteúdos e Formatos'),
-      S.listItem()
-        .title('Partner logos')
-        .child(S.documentTypeList('partnerLogo').title('Partner logos')),
+        .title('Intro'),
       S.documentListItem()
         .id('logoCarousel')
         .schemaType('logoCarousel')
@@ -26,7 +23,7 @@ const deskStructure = (S: StructureBuilder) =>
       S.documentListItem()
         .id('universosSection')
         .schemaType('universosSection')
-        .title('Universos (Parallax Video)'),
+        .title('Video Banner'),
       S.documentListItem()
         .id('produtosSandes')
         .schemaType('produtosSandes')
@@ -35,10 +32,10 @@ const deskStructure = (S: StructureBuilder) =>
         .id('casesSection')
         .schemaType('casesSection')
         .title('Cases'),
-      S.divider(),
-      S.listItem()
-        .title('Cases (legacy carousel)')
-        .child(S.documentTypeList('cases').title('Cases (legacy)')),
+      S.documentListItem()
+        .id('footerSection')
+        .schemaType('footerSection')
+        .title('Footer'),
     ])
 
 export default deskStructure

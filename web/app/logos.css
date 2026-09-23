@@ -1,6 +1,9 @@
 /* —— Logo grid (partners) —— */
 .logos {
-  padding-block: clamp(160px, 6vh, 100px);
+  /* Above the video banner so the purple particle stays in front of it. */
+  z-index: 3;
+  padding-top: clamp(16px, 3vh, 32px);
+  padding-bottom: clamp(104px, 11vh, 168px);
   border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, var(--color-bg-page));
 }
 
@@ -132,7 +135,9 @@
 
 @media (max-width: 960px) {
   .logos {
-    padding-block: var(--section-padding-y);
+    padding-top: clamp(8px, 2vh, 16px);
+    /* Room for the purple particle to hang halfway onto the video banner. */
+    padding-bottom: clamp(36px, 8vh, 56px);
   }
 
   .logos__inner {
@@ -142,8 +147,19 @@
 
   .logo-grid {
     width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(6px, 1.8vw, 12px);
     margin-inline: auto;
+  }
+
+  .logo-grid__circle {
+    max-width: clamp(44px, 14vw, 64px);
+    border-width: 1.5px;
+  }
+
+  /* Let purple bleed onto the video; logos z-index keeps it in front. */
+  .logos .scroll-particles {
+    overflow: visible;
   }
 
   .logos__decor--red {
@@ -165,22 +181,5 @@
   .logos__decor--purple,
   .logos__decor--yellow {
     display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .logo-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--section-gap-sm);
-  }
-
-  .logo-grid__circle {
-    max-width: 88px;
-  }
-}
-
-@media (max-width: 400px) {
-  .logo-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

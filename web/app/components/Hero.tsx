@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import HeroVideo from './HeroVideo'
+import ScrollParticles from './ScrollParticles'
+import {HERO_PARTICLES} from '../lib/particleConfigs'
 import {
   PortableTextBlock,
   renderHeadingText,
@@ -29,11 +31,7 @@ export default function Hero({
 }: HeroProps) {
   return (
     <section id="inicio" className="section hero">
-      <div className="section__particles" aria-hidden="true">
-        <div className="section__decor hero__decor--green" />
-        <div className="section__decor hero__decor--red" />
-        <div className="section__decor hero__decor--purple" />
-      </div>
+      <ScrollParticles className="section__particles" particles={HERO_PARTICLES} />
 
       <div className="hero__inner site-container">
         <div className="section__content hero__content">

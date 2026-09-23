@@ -1,48 +1,32 @@
-/* —— Conteúdos layout —— */
+/* —— Intro layout —— */
 .conteudos {
-  min-height: min(100svh, 900px);
+  min-height: auto;
 }
 
 .conteudos__inner {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: min(100svh, 900px);
+  min-height: min(78svh, 720px);
   width: 100%;
-  padding-block: clamp(80px, 12vh, 120px) clamp(80px, 10vh, 100px);
+  padding-block: clamp(64px, 10vh, 96px) clamp(32px, 4vh, 48px);
 }
 
 .conteudos__content {
   margin-left: auto;
 }
 
-.conteudos__content p {
-  max-width: 42ch;
+.conteudos__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 
-.conteudos__cta {
-  align-self: flex-end;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(56px, 8vw, 72px);
-  height: clamp(56px, 8vw, 72px);
-  border-radius: 50%;
-  background: var(--color-green);
-  color: var(--color-text);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: lowercase;
-  text-decoration: none;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.conteudos__cta:hover {
-  transform: scale(1.05);
-  background: color-mix(in srgb, var(--color-green) 85%, var(--color-text));
+.conteudos__body-p {
+  margin: 0;
+  white-space: pre-line;
 }
 
 .conteudos__visual {
@@ -63,8 +47,12 @@
   display: block;
 }
 
-.conteudos__particles {
+.conteudos__particles--behind {
   z-index: 1;
+}
+
+.conteudos__particles--front {
+  z-index: 3;
 }
 
 .conteudos__decor--orange-tl {
@@ -112,12 +100,12 @@
 
 @media (max-width: 960px) {
   .conteudos {
-    --conteudos-circle: min(88vw, 420px);
+    --conteudos-circle: min(62vw, 300px);
     display: flex;
     flex-direction: column;
     align-items: stretch;
     min-height: auto;
-    padding-block: var(--section-padding-y);
+    padding-block: var(--section-padding-y) clamp(16px, 3vh, 24px);
     margin-top: 0;
   }
 
@@ -137,7 +125,8 @@
     flex-shrink: 0;
     justify-content: flex-start;
     min-height: auto;
-    padding: var(--section-gap-md) 0 0;
+    /* Keep the shared gutter — a `padding: x 0 0` shorthand wiped it out */
+    padding: var(--section-gap-sm) var(--site-gutter) 0;
   }
 
   .conteudos__content {
@@ -150,13 +139,12 @@
     font-size: clamp(1.5rem, 6.5vw, 2rem);
   }
 
-  .conteudos__content p {
+  .conteudos__body {
     max-width: none;
-    font-size: clamp(1rem, 3.8vw, 1.125rem);
   }
 
-  .conteudos__cta {
-    align-self: flex-start;
+  .conteudos__body-p {
+    font-size: clamp(1rem, 3.8vw, 1.125rem);
   }
 
   .conteudos__decor--purple-top,
@@ -164,5 +152,10 @@
   .conteudos__decor--orange-right,
   .conteudos__decor--orange-tl {
     display: none;
+  }
+
+  /* Let the top-right green bleed past the circle edge (matches reference). */
+  .conteudos .scroll-particles {
+    overflow: visible;
   }
 }

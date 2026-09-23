@@ -9,8 +9,13 @@ import './parallax.css'
 import './cases-section.css'
 import './produtos.css'
 import './footer.css'
+import './scroll-particles.css'
+import './cursor.css'
+import './whatsapp-float.css'
+import CustomCursor from './components/CustomCursor'
 import Header from './components/Header'
 import SplashScreen from './components/SplashScreen'
+import WhatsAppFloat from './components/WhatsAppFloat'
 import {montserrat, nomos} from './fonts'
 
 const client = createClient({
@@ -39,6 +44,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <SplashScreen />
         <Header />
         {children}
+        <CustomCursor />
+        <WhatsAppFloat />
       </body>
     </html>
   )

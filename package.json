@@ -17,8 +17,8 @@
   "dependencies": {
     "@sanity/vision": "^4.22.0",
     "keen-slider": "^6.8.6",
-    "react": "^19.1",
-    "react-dom": "^19.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "sanity": "^4.22.0",
     "styled-components": "^6.1.18"
   },

@@ -1,7 +1,10 @@
-/* —— Parallax video band (below logo grid) —— */
+/* —— Video banner band (below logo grid) —— */
 .parallax-video {
   position: relative;
-  min-height: min(92svh, 820px);
+  /* Above produtos particles that bleed upward into this band; below logos
+     so only the purple particle (from the logo section) stays in front. */
+  z-index: 2;
+  min-height: min(68svh, 620px);
   overflow: hidden;
   background: var(--color-bg-page);
 }
@@ -34,18 +37,11 @@
   object-fit: cover;
   display: block;
   border: none;
-  filter: grayscale(1);
 }
 
 .parallax-video__scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-bg-page) 20%, transparent) 0%,
-    color-mix(in srgb, var(--color-red) 35%, transparent) 45%,
-    color-mix(in srgb, var(--color-purple) 72%, var(--color-bg-page)) 100%
-  );
   pointer-events: none;
 }
 
@@ -62,13 +58,9 @@
   max-width: min(640px, 100%);
 }
 
-.parallax-video__text p {
-  max-width: 48ch;
-}
-
 @media (max-width: 960px) {
   .parallax-video {
-    min-height: min(80svh, 640px);
+    min-height: min(46svh, 360px);
   }
 
   .parallax-video__media {

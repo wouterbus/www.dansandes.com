@@ -10,7 +10,7 @@ import ProdutosSandesSection from './components/ProdutosSandesSection'
 import type {CaseStudyData} from './components/CaseStudy'
 import type {ProdutoCardData} from './components/ProdutoCard'
 import type {BrandColor} from './lib/brandColor'
-import type {PortableTextBlock} from './lib/renderHeadingText'
+import {renderHeadingText, type PortableTextBlock} from './lib/renderHeadingText'
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '89ztrc1x',
@@ -18,8 +18,6 @@ const client = createClient({
   apiVersion: '2024-10-01',
   useCdn: false,
 })
-
-export const dynamic = 'force-dynamic'
 
 async function getData() {
   const [
@@ -30,6 +28,7 @@ async function getData() {
     universosSection,
     produtosSandes,
     casesSection,
+    footerSection,
   ] = await Promise.all([
     client.fetch(groq`*[_type=='configuracoes'][0]{title, logo{asset->{url}}, favicon{asset->{url}}}`),
     client.fetch(groq`*[_type=='heroBanner'][0]{
@@ -41,8 +40,6 @@ async function getData() {
     client.fetch(groq`*[_type=='conteudosSection'][0]{
       title,
       body,
-      ctaLabel,
-      ctaLink,
       media{asset->{url, mimeType}, alt},
       image{asset->{url, mimeType}, alt}
     }`),
@@ -54,7 +51,6 @@ async function getData() {
     }`),
     client.fetch(groq`*[_type=='universosSection'][0]{
       title,
-      body,
       video{asset->{url, mimeType}},
       videoAlt
     }`),
@@ -66,24 +62,40 @@ async function getData() {
         body,
         logo{asset->{url}, alt},
         backgroundImage{asset->{url}},
+        backgroundVideo{asset->{url, mimeType}},
         serviceGroups[]{items}
       }
     }`),
     client.fetch(groq`*[_type=='casesSection'][0]{
+      title,
       items[]{
         _key,
         internalName,
+        label,
+        headline,
+        shortDescription,
+        tags,
+        description,
         title,
         subtitle,
         paragraph,
         brandColor,
         video{asset->{url, mimeType}, alt},
-        thumb{asset->{url}, alt},
+        videoPoster{asset->{url, mimeType}},
+        thumb{asset->{url, mimeType}, alt},
         clientLogo->{
           name,
           image{asset->{url}, alt}
-        }
+        },
+        clientLogoCustom{asset->{url}, alt}
       }
+    }`),
+    client.fetch(groq`*[_type=='footerSection'][0]{
+      title,
+      body,
+      logo{asset->{url}, alt},
+      instagramUrl,
+      email
     }`),
   ])
   return {
@@ -94,6 +106,7 @@ async function getData() {
     universosSection,
     produtosSandes,
     casesSection,
+    footerSection,
   }
 }
 
@@ -105,6 +118,7 @@ function mapProdutoCards(
     body?: string
     logo?: {asset?: {url?: string}; alt?: string}
     backgroundImage?: {asset?: {url?: string}}
+    backgroundVideo?: {asset?: {url?: string; mimeType?: string}}
     serviceGroups?: {items?: string[]}[]
   }[]
 ): ProdutoCardData[] | undefined {
@@ -118,48 +132,97 @@ function mapProdutoCards(
     logoUrl: card.logo?.asset?.url,
     logoAlt: card.logo?.alt,
     backgroundUrl: card.backgroundImage?.asset?.url,
+    backgroundVideoUrl: card.backgroundVideo?.asset?.url,
+    backgroundVideoMimeType: card.backgroundVideo?.asset?.mimeType,
     serviceGroups: card.serviceGroups,
   }))
+}
+
+function flattenBlocks(blocks?: PortableTextBlock[]): string | undefined {
+  const text = blocks
+    ?.map((block) => block.children?.map((child) => child.text ?? '').join('') ?? '')
+    .join(' ')
+    .trim()
+  return text || undefined
+}
+
+function cleanList(values?: string[]): string[] | undefined {
+  const list = values?.map((value) => value?.trim()).filter((value): value is string =>
+    Boolean(value)
+  )
+  return list?.length ? list : undefined
 }
 
 function mapCaseStudies(
   items?: {
     _key?: string
     internalName?: string
+    label?: string[]
+    headline?: string
+    shortDescription?: string
+    tags?: string[]
+    description?: string
     title?: PortableTextBlock[]
     subtitle?: string
     paragraph?: string
     brandColor?: string
     video?: {asset?: {url?: string; mimeType?: string}; alt?: string}
-    thumb?: {asset?: {url?: string}; alt?: string}
+    videoPoster?: {asset?: {url?: string; mimeType?: string}}
+    thumb?: {asset?: {url?: string; mimeType?: string}; alt?: string}
     clientLogo?: {
       name?: string
       image?: {asset?: {url?: string}; alt?: string}
     }
+    clientLogoCustom?: {asset?: {url?: string}; alt?: string}
   }[]
 ): CaseStudyData[] | undefined {
   if (!items?.length) return undefined
 
-  return items.map((item) => ({
-    _key: item._key,
-    internalName: item.internalName,
-    title: item.title,
-    subtitle: item.subtitle,
-    paragraph: item.paragraph,
-    brandColor: item.brandColor as BrandColor | undefined,
-    videoUrl: item.video?.asset?.url,
-    videoMimeType: item.video?.asset?.mimeType,
-    videoAlt: item.video?.alt,
-    thumbUrl: item.thumb?.asset?.url,
-    thumbAlt: item.thumb?.alt,
-    clientLogoUrl: item.clientLogo?.image?.asset?.url,
-    clientLogoAlt: item.clientLogo?.image?.alt || item.clientLogo?.name,
-  }))
+  return items.map((item) => {
+    const customUrl = item.clientLogoCustom?.asset?.url
+    const gridUrl = item.clientLogo?.image?.asset?.url
+
+    return {
+      _key: item._key,
+      internalName: item.internalName,
+      label: cleanList(item.label),
+      headline: item.headline || flattenBlocks(item.title),
+      shortDescription: item.shortDescription || item.subtitle,
+      tags: cleanList(item.tags),
+      description: item.description || item.paragraph,
+      brandColor: item.brandColor as BrandColor | undefined,
+      videoUrl: item.video?.asset?.url,
+      videoMimeType: item.video?.asset?.mimeType,
+      videoAlt: item.video?.alt,
+      videoPosterUrl: item.videoPoster?.asset?.url,
+      videoPosterMimeType: item.videoPoster?.asset?.mimeType,
+      thumbUrl: item.thumb?.asset?.url,
+      thumbMimeType: item.thumb?.asset?.mimeType,
+      thumbAlt: item.thumb?.alt,
+      clientLogoUrl: customUrl || gridUrl,
+      clientLogoAlt:
+        (customUrl ? item.clientLogoCustom?.alt : undefined) ||
+        item.clientLogo?.image?.alt ||
+        item.clientLogo?.name,
+    }
+  })
 }
 
 export default async function HomePage() {
-  const {heroBanner, conteudosSection, logoCarousel, universosSection, produtosSandes, casesSection} =
-    await getData()
+  const {
+    heroBanner,
+    conteudosSection,
+    logoCarousel,
+    universosSection,
+    produtosSandes,
+    casesSection,
+    footerSection,
+  } = await getData()
+
+  const footerTitle = renderHeadingText(footerSection?.title, [
+    {text: 'Que histórias sua marca ', accent: false},
+    {text: 'tem para contar?', accent: true, color: 'yellow'},
+  ])
 
   return (
     <>
@@ -180,8 +243,6 @@ export default async function HomePage() {
           conteudosSection?.media?.asset?.mimeType ?? conteudosSection?.image?.asset?.mimeType
         }
         mediaAlt={conteudosSection?.media?.alt ?? conteudosSection?.image?.alt}
-        ctaLabel={conteudosSection?.ctaLabel}
-        ctaLink={conteudosSection?.ctaLink}
       />
 
       <LogoGridSection
@@ -195,7 +256,6 @@ export default async function HomePage() {
 
       <ParallaxVideoSection
         title={universosSection?.title}
-        body={universosSection?.body}
         videoUrl={universosSection?.video?.asset?.url}
         videoMimeType={universosSection?.video?.asset?.mimeType}
         videoAlt={universosSection?.videoAlt}
@@ -203,9 +263,19 @@ export default async function HomePage() {
 
       <ProdutosSandesSection cards={mapProdutoCards(produtosSandes?.cards)} />
 
-      <CasesSection cases={mapCaseStudies(casesSection?.items)} />
+      <CasesSection
+        title={casesSection?.title}
+        cases={mapCaseStudies(casesSection?.items)}
+      />
 
-      <Footer />
+      <Footer
+        title={footerTitle}
+        body={footerSection?.body}
+        logoUrl={footerSection?.logo?.asset?.url}
+        logoAlt={footerSection?.logo?.alt}
+        instagramUrl={footerSection?.instagramUrl}
+        email={footerSection?.email}
+      />
     </>
   )
 }

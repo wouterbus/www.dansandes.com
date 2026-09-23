@@ -1,0 +1,77 @@
+/* —— Circular particle cursor —— */
+:root {
+  /* Pick any brand accent: --color-red / --color-orange / --color-yellow /
+     --color-green / --color-purple */
+  --cursor-color: var(--color-orange);
+  --cursor-size: 18px;
+  --cursor-size-link: 56px;
+}
+
+body.has-custom-cursor,
+body.has-custom-cursor * {
+  cursor: none;
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 0.25s ease;
+}
+
+.custom-cursor--visible {
+  opacity: 1;
+}
+
+.custom-cursor__ring {
+  display: block;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  /* Transparent border keeps the box size identical between states, so the
+     background-filled dot and the outlined ring never jump. */
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: var(--cursor-color);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.18s ease;
+}
+
+.custom-cursor--link .custom-cursor__ring {
+  width: var(--cursor-size-link);
+  height: var(--cursor-size-link);
+  background: transparent;
+  border-color: #ffffff;
+}
+
+/* Case modals are brand-coloured full-screen surfaces. Keep the cursor
+   legible there without changing its treatment elsewhere. */
+.custom-cursor--dark .custom-cursor__ring {
+  background: var(--color-bg-page);
+}
+
+.custom-cursor--dark.custom-cursor--link .custom-cursor__ring {
+  background: transparent;
+  border-color: var(--color-bg-page);
+}
+
+.custom-cursor--active .custom-cursor__ring {
+  transform: translate(-50%, -50%) scale(0.82);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor,
+  .custom-cursor__ring {
+    transition: none;
+  }
+}

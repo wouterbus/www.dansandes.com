@@ -58,14 +58,14 @@ export default function HeaderShell({defaultLogoUrl}: HeaderShellProps) {
 
           <button
             type="button"
-            className={`site-header__menu${menuOpen ? ' site-header__menu--open' : ''}`}
+            className={`site-header__menu circle-toggle${menuOpen ? ' circle-toggle--close' : ''}`}
             onClick={toggleMenu}
             aria-expanded={menuOpen}
             aria-controls="site-menu"
             aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
           >
-            <span className="site-header__menu-line" />
-            <span className="site-header__menu-line" />
+            <span className="circle-toggle__line" />
+            <span className="circle-toggle__line" />
           </button>
         </div>
       </header>

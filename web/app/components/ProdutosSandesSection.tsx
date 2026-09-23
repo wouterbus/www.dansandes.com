@@ -1,7 +1,9 @@
 'use client'
 
-import {useMemo, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import ProdutoCard, {type ProdutoCardData} from './ProdutoCard'
+import ScrollParticles from './ScrollParticles'
+import {PRODUTOS_PARTICLES} from '../lib/particleConfigs'
 
 const DEFAULT_CARDS: ProdutoCardData[] = [
   {
@@ -17,7 +19,7 @@ const DEFAULT_CARDS: ProdutoCardData[] = [
   },
   {
     title: 'CONTEÚDO E CAMPANHAS MULTIPLATAFORMA',
-    brandColor: 'orange',
+    brandColor: 'yellow',
     serviceGroups: [
       {items: ['Redes sociais', 'Plataformas Digitais']},
       {items: ['Publis', 'Lançamentos']},
@@ -56,36 +58,37 @@ function defaultExpandedKey(items: ProdutoCardData[]) {
 export default function ProdutosSandesSection({cards}: ProdutosSandesSectionProps) {
   const items = cards?.length ? cards : DEFAULT_CARDS
   const defaultKey = useMemo(() => defaultExpandedKey(items), [items])
-  const [expandedKey, setExpandedKey] = useState(defaultKey)
+  // The first card is open (and playing) until the visitor takes over; from then
+  // on "nothing hovered" means every card is closed and paused.
+  const [expandedKey, setExpandedKey] = useState<string | null>(defaultKey)
 
   const hasHover = () =>
     typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
+
+  // Touch has no hover to drive the accordion, so every card starts closed and
+  // the chevron is the only thing that opens one (and starts its video).
+  useEffect(() => {
+    if (!hasHover()) setExpandedKey(null)
+  }, [])
 
   const expand = (key: string) => {
     if (hasHover()) setExpandedKey(key)
   }
 
-  const resetToDefault = () => {
-    if (hasHover()) setExpandedKey(defaultKey)
+  const collapseAll = () => {
+    if (hasHover()) setExpandedKey(null)
   }
 
   const toggle = (key: string) => {
-    setExpandedKey((current) => (current === key ? defaultKey : key))
+    setExpandedKey((current) => (current === key ? null : key))
   }
 
   return (
     <section id="produtos" className="section produtos" aria-label="Produtos Sandes">
-      <div className="section__particles produtos__particles" aria-hidden="true">
-        <div className="section__decor produtos__decor--orange-tl" />
-        <div className="section__decor produtos__decor--orange-bl" />
-        <div className="section__decor produtos__decor--green-mid" />
-        <div className="section__decor produtos__decor--yellow-tr" />
-        <div className="section__decor produtos__decor--orange-mr" />
-        <div className="section__decor produtos__decor--purple-br" />
-      </div>
+      <ScrollParticles className="section__particles produtos__particles" particles={PRODUTOS_PARTICLES} />
 
       <div className="produtos__inner site-container">
-        <div className="produtos__grid" onMouseLeave={resetToDefault}>
+        <div className="produtos__grid" onMouseLeave={collapseAll}>
           {items.map((card, index) => {
             const key = cardKey(card, index)
             return (

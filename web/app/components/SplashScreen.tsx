@@ -39,11 +39,11 @@ export default function SplashScreen() {
 
     const finish = () => {
       if (getSplashHasFinished()) return
-      markSplashFinished()
       setPlaying(false)
       setFading(true)
 
       addTimer(() => {
+        markSplashFinished()
         setVisible(false)
         document.body.classList.remove('splash-active')
       }, FADE_MS)

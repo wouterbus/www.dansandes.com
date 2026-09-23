@@ -2,7 +2,7 @@
 
 import {Children, useState, type ReactNode} from 'react'
 
-const PAGE_SIZE = 3
+const PAGE_SIZE = 4
 
 type CasesLoadMoreProps = {
   children: ReactNode

@@ -1,3 +1,6 @@
+import {defineField} from 'sanity'
+import {brandColorInput} from './brandColor'
+
 /** Portable text for headings — bold + 5-color highlight annotation */
 export const headingTextField = {
   type: 'array' as const,
@@ -17,23 +20,13 @@ export const headingTextField = {
             type: 'object',
             title: 'Highlight color',
             fields: [
-              {
+              defineField({
                 name: 'color',
                 title: 'Color',
-                type: 'string',
-                options: {
-                  list: [
-                    {title: 'Red', value: 'red'},
-                    {title: 'Orange', value: 'orange'},
-                    {title: 'Yellow', value: 'yellow'},
-                    {title: 'Green', value: 'green'},
-                    {title: 'Purple', value: 'purple'},
-                  ],
-                  layout: 'radio',
-                },
                 initialValue: 'orange',
+                ...brandColorInput,
                 validation: (Rule) => Rule.required(),
-              },
+              }),
             ],
           },
         ],

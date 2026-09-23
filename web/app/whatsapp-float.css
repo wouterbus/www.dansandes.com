@@ -1,0 +1,503 @@
+.wa-float {
+  position: fixed;
+  right: clamp(16px, 3vw, 28px);
+
+  /* Keep clear of the iOS Safari toolbar / home indicator so the FAB
+  is visible on first paint — not only after scroll settles. */
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+
+  z-index: 1200;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+
+  pointer-events: none;
+
+  /* Own compositing layer: avoids intermittent “missing” fixed UI on iOS. */
+  transform: translateZ(0);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.wa-float--ready {
+  opacity: 1;
+  visibility: visible;
+}
+
+.wa-float__trigger,
+.wa-float__panel,
+.wa-float__chip,
+.wa-float__send,
+.wa-float__close,
+.wa-float__input {
+  pointer-events: auto;
+}
+
+.wa-float__trigger {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 56px;
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: var(--color-orange);
+  color: var(--color-text);
+
+  box-shadow:
+    0 12px 32px
+    color-mix(in srgb, var(--color-orange) 42%, transparent);
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.wa-float__trigger > svg {
+  position: relative;
+  z-index: 1;
+
+  display: block;
+  flex-shrink: 0;
+}
+
+.wa-float__trigger:hover {
+  transform: scale(1.05);
+}
+
+.wa-float__trigger:active {
+  transform: scale(0.95);
+}
+
+.wa-float--open .wa-float__trigger {
+  background: var(--color-yellow);
+
+  box-shadow:
+    0 12px 32px
+    color-mix(in srgb, var(--color-yellow) 38%, transparent);
+}
+
+.wa-float__pulse {
+  position: absolute;
+  inset: 0;
+
+  border-radius: 50%;
+
+  background: var(--color-orange);
+  opacity: 0.28;
+
+  animation:
+    wa-float-pulse
+    2s cubic-bezier(0, 0, 0.2, 1)
+    infinite;
+
+  pointer-events: none;
+}
+
+.wa-float--open .wa-float__pulse {
+  background: var(--color-yellow);
+  animation: none;
+  opacity: 0;
+}
+
+
+/* —— Panel —— */
+
+.wa-float__panel {
+  width: min(22rem, calc(100vw - 3rem));
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  border: 1px solid
+    color-mix(in srgb, var(--color-text) 14%, transparent);
+
+  background:
+    color-mix(in srgb, var(--color-bg-page) 94%, #000);
+
+  box-shadow:
+    0 24px 60px
+    color-mix(in srgb, #000 45%, transparent);
+
+  /* The animation grows directly out of the button. */
+  transform-origin: bottom right;
+
+  /* Closed state */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform:
+    translate(10px, 14px)
+    scale(0.05);
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.55s cubic-bezier(0.16, 1.2, 0.3, 1),
+    visibility 0s linear 0.55s;
+}
+
+.wa-float--open .wa-float__panel {
+  /* Open state */
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform:
+    translate(0, 0)
+    scale(1);
+
+  transition:
+    opacity 0.1s ease,
+    transform 0.55s cubic-bezier(0.16, 1.2, 0.3, 1),
+    visibility 0s;
+}
+
+
+.wa-float__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  background: var(--color-orange);
+  color: var(--color-text);
+}
+
+.wa-float__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 50%;
+
+  color: white;
+
+  flex-shrink: 0;
+}
+
+.wa-float__header-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.wa-float__name {
+  margin: 0;
+
+  font-family: var(--font-title), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.wa-float__status {
+  margin: 2px 0 0;
+
+  font-size: 0.6875rem;
+  opacity: 0.75;
+}
+
+.wa-float__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: var(--color-text);
+
+  transition: background-color 0.2s ease;
+}
+
+.wa-float__close:hover {
+  background:
+    color-mix(in srgb, var(--color-bg-page) 22%, transparent);
+}
+
+.wa-float__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  max-height: 18rem;
+
+  padding: 16px;
+
+  overflow-y: auto;
+
+  background:
+    radial-gradient(
+      circle at 10% 12%,
+      color-mix(in srgb, var(--color-green) 14%, transparent),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      color-mix(in srgb, var(--color-purple) 12%, transparent),
+      transparent 38%
+    ),
+    color-mix(in srgb, var(--color-bg-page) 88%, #000);
+}
+
+.wa-float__row {
+  display: flex;
+}
+
+.wa-float__row--bot {
+  justify-content: flex-start;
+}
+
+.wa-float__row--user {
+  justify-content: flex-end;
+}
+
+.wa-float__bubble {
+  margin: 0;
+
+  max-width: 80%;
+
+  padding: 8px 14px;
+
+  border-radius: 16px;
+
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.wa-float__bubble--bot {
+  border-bottom-left-radius: 6px;
+
+  background: var(--color-green);
+  color: var(--color-text);
+}
+
+.wa-float__bubble--user {
+  border-bottom-right-radius: 6px;
+
+  background: var(--color-orange);
+  color: var(--color-text);
+}
+
+.wa-float__typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  width: fit-content;
+
+  padding: 12px 14px;
+
+  border-radius: 16px;
+  border-bottom-left-radius: 6px;
+
+  background: var(--color-green);
+}
+
+.wa-float__typing span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background:
+    color-mix(in srgb, var(--color-text) 75%, transparent);
+
+  animation:
+    wa-float-dot
+    1s ease-in-out
+    infinite;
+}
+
+.wa-float__typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.wa-float__typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.wa-float__quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  padding: 12px 16px 0;
+
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-text) 12%, transparent);
+}
+
+.wa-float__chip {
+  padding: 6px 12px;
+
+  border: 1px solid
+    color-mix(in srgb, var(--color-text) 18%, transparent);
+
+  border-radius: 999px;
+
+  background: transparent;
+  color: var(--text-muted);
+
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.wa-float__chip:hover {
+  border-color: var(--color-yellow);
+  color: var(--color-yellow);
+}
+
+.wa-float__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 16px 14px;
+}
+
+.wa-float__input {
+  min-width: 0;
+  flex: 1;
+
+  padding: 10px 16px;
+
+  border: 1px solid
+    color-mix(in srgb, var(--color-text) 16%, transparent);
+
+  border-radius: 999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--color-text) 6%,
+      var(--color-bg-page)
+    );
+
+  color: var(--color-text);
+
+  font: inherit;
+  font-size: 0.875rem;
+
+  outline: none;
+}
+
+.wa-float__input::placeholder {
+  color: var(--text-muted);
+}
+
+.wa-float__input:focus {
+  border-color: var(--color-yellow);
+}
+
+.wa-float__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: var(--color-yellow);
+  color: var(--color-bg-page);
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.wa-float__send:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.wa-float__send:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@keyframes wa-float-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+
+  75%,
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+@keyframes wa-float-dot {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-float__panel,
+  .wa-float__pulse,
+  .wa-float__typing span {
+    animation: none;
+  }
+
+  .wa-float__trigger,
+  .wa-float__send,
+  .wa-float__chip {
+    transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .wa-float {
+    right: max(16px, env(safe-area-inset-right, 0px));
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .wa-float__trigger {
+    width: 52px;
+    height: 52px;
+  }
+}

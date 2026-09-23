@@ -9,7 +9,7 @@ export default defineType({
       name: 'name',
       title: 'Name (internal)',
       type: 'string',
-      description: 'e.g. CONMEBOL Libertadores — used when picking this logo in Cases.',
+      description: 'e.g. CONMEBOL Libertadores — shown in dropdowns when picking a logo.',
       validation: (Rule) => Rule.required(),
     },
     {

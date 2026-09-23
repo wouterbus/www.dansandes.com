@@ -1,4 +1,4 @@
-import {ReactNode} from 'react'
+import {Fragment, ReactNode} from 'react'
 
 export type HighlightColor = 'red' | 'orange' | 'yellow' | 'green' | 'purple'
 
@@ -25,6 +25,22 @@ type RenderHeadingTextOptions = {
   legacyStrongColor?: HighlightColor
   /** Use on brand-color bars: white emphasis text instead of palette highlight colors */
   emphasisClassName?: string
+  /** Start a new line after each comma on wide screens only */
+  breakAfterComma?: boolean
+}
+
+/** The separator is kept in place so the comma and its space survive on mobile,
+ *  where the break itself is switched off. */
+function withCommaBreaks(text: string): ReactNode {
+  const segments = text.split(/(,[^\S\n]+)/)
+  if (segments.length < 2) return text
+
+  return segments.map((segment, index) => (
+    <Fragment key={index}>
+      {segment}
+      {/^,[^\S\n]+$/.test(segment) && <br className="heading-break" />}
+    </Fragment>
+  ))
 }
 
 export function renderHeadingText(
@@ -37,6 +53,8 @@ export function renderHeadingText(
   const markDefs = block?.markDefs ?? []
   const legacyColor = options.legacyStrongColor ?? 'orange'
   const emphasisClassName = options.emphasisClassName
+  const renderText = (text: string): ReactNode =>
+    options.breakAfterComma ? withCommaBreaks(text) : text
 
   if (!children?.length) {
     return defaults.map((part, i) => (
@@ -50,7 +68,7 @@ export function renderHeadingText(
               : undefined
         }
       >
-        {part.text}
+        {renderText(part.text)}
       </span>
     ))
   }
@@ -59,7 +77,7 @@ export function renderHeadingText(
     const text = child.text ?? ''
     const marks = child.marks ?? []
 
-    let node: ReactNode = text
+    let node: ReactNode = renderText(text)
 
     if (marks.includes('em')) {
       node = <em>{node}</em>

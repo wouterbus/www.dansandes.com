@@ -1,16 +1,17 @@
-import {defineType} from 'sanity'
-import {brandColorField} from '../fields/brandColor'
+import {defineType, type PreviewValue} from 'sanity'
+import {produtoBrandColorField} from '../fields/brandColor'
+import {videoOrGifFileOptions, webPlayableVideo} from '../fields/videoOrGifFile'
 
 export default defineType({
   name: 'produtoCard',
-  title: 'Produto card',
+  title: 'Card de produto',
   type: 'object',
   fields: [
     {
       name: 'cardTitle',
-      title: 'Card title (internal)',
+      title: 'Título do card (interno)',
       type: 'string',
-      description: 'Label for this card in Sanity only — e.g. Sandes Originais, Hub.',
+      description: 'Rótulo apenas para organização no Sanity. Ex.: Sandes Originais, Hub.',
       validation: (Rule) => Rule.required(),
     },
     {
@@ -21,7 +22,7 @@ export default defineType({
       fields: [
         {
           name: 'alt',
-          title: 'Alt text',
+          title: 'Texto alternativo',
           type: 'string',
         },
       ],
@@ -29,15 +30,15 @@ export default defineType({
     },
     {
       name: 'title',
-      title: 'Title (on website)',
+      title: 'Título no site',
       type: 'string',
-      description: 'Headline shown on the card front.',
+      description: 'Frase principal exibida na frente do card.',
       validation: (Rule) => Rule.required(),
     },
     {
       name: 'serviceGroups',
-      title: 'Services (4 groups)',
-      description: 'Exactly 4 groups — each becomes one quadrant in the 2×2 grid.',
+      title: 'Serviços',
+      description: 'Adicione exatamente 4 grupos. Cada grupo vira uma área do grid.',
       type: 'array',
       of: [
         {
@@ -46,9 +47,10 @@ export default defineType({
           fields: [
             {
               name: 'items',
-              title: 'Items',
+              title: 'Itens',
               type: 'array',
               of: [{type: 'string'}],
+              description: 'Liste os serviços deste grupo.',
               validation: (Rule) => Rule.min(1).max(6),
             },
           ],
@@ -56,30 +58,46 @@ export default defineType({
             select: {items: 'items'},
             prepare({items}: {items?: string[]}) {
               return {
-                title: items?.filter(Boolean).join(' · ') || 'Service group',
+                title: items?.filter(Boolean).join(' · ') || 'Grupo de serviços',
               }
             },
           },
         },
       ],
       validation: (Rule) =>
-        Rule.length(4).error('Add exactly 4 service groups (one per grid quadrant).'),
+        Rule.length(4).error('Adicione exatamente 4 grupos de serviços.'),
     },
-    {...brandColorField},
+    {...produtoBrandColorField},
     {
       name: 'backgroundImage',
-      title: 'Background image',
+      title: 'Imagem de fundo',
       type: 'image',
       options: {hotspot: true},
-      description: 'Shown behind the brand color overlay (slightly visible through the tint).',
-      validation: (Rule) => Rule.required(),
+      description: 'Tamanho ideal: 1080px x 1920px.',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {backgroundVideo?: {asset?: {_ref?: string}}}
+          const image = value as {asset?: {_ref?: string}} | undefined
+          if (!image?.asset && !parent?.backgroundVideo?.asset) {
+            return 'Adicione uma imagem ou vídeo de fundo'
+          }
+          return true
+        }),
+    },
+    {
+      name: 'backgroundVideo',
+      title: 'Vídeo de fundo',
+      type: 'file',
+      options: videoOrGifFileOptions,
+      description: 'Use MP4 (H.264), WebM ou GIF animado. Tamanho ideal: 1080px x 1920px.',
+      validation: (Rule) => webPlayableVideo(Rule),
     },
     {
       name: 'body',
-      title: 'Expandable paragraph',
+      title: 'Texto expansível',
       type: 'text',
       rows: 4,
-      description: 'Revealed when the visitor taps the arrow button.',
+      description: 'Texto exibido quando o visitante toca no botão de seta.',
     },
   ],
   preview: {
@@ -97,16 +115,16 @@ export default defineType({
     }: {
       cardTitle?: string
       title?: string
-      media?: unknown
+      media?: PreviewValue['media']
       brandColor?: string
     }) {
       const subtitleParts = [
         cardTitle && title ? title : null,
-        brandColor ? `Color: ${brandColor}` : null,
+        brandColor ? `Cor: ${brandColor}` : null,
       ].filter(Boolean)
 
       return {
-        title: cardTitle || title || 'Produto card',
+        title: cardTitle || title || 'Card de produto',
         subtitle: subtitleParts.length ? subtitleParts.join(' · ') : undefined,
         media,
       }

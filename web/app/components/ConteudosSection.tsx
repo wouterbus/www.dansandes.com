@@ -1,11 +1,12 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import {isLoopingMedia} from '../lib/isGifMedia'
 import {
   PortableTextBlock,
   renderHeadingText,
 } from '../lib/renderHeadingText'
 import LoopingMedia from './LoopingMedia'
+import ScrollParticles from './ScrollParticles'
+import {CONTEUDOS_PARTICLES_BEHIND, CONTEUDOS_PARTICLES_FRONT} from '../lib/particleConfigs'
 
 type ConteudosSectionProps = {
   title?: PortableTextBlock[]
@@ -13,8 +14,6 @@ type ConteudosSectionProps = {
   mediaUrl?: string
   mediaMimeType?: string | null
   mediaAlt?: string
-  ctaLabel?: string
-  ctaLink?: string
 }
 
 const DEFAULT_TITLE = [
@@ -25,31 +24,39 @@ const DEFAULT_TITLE = [
 const DEFAULT_BODY =
   'Projetos com relevância cultural que se destacam em um mar de conteúdos que seguem fórmulas prontas.'
 
+/** Split Sanity text-field alineas (blank lines) into real paragraphs. */
+function renderBody(body: string) {
+  const paragraphs = body
+    .split(/\n\s*\n/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  if (paragraphs.length === 0) return null
+
+  return (
+    <div className="conteudos__body">
+      {paragraphs.map((paragraph, index) => (
+        <p key={index} className="conteudos__body-p">
+          {paragraph}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 export default function ConteudosSection({
   title,
   body,
   mediaUrl,
   mediaMimeType,
   mediaAlt,
-  ctaLabel = 'cta',
-  ctaLink,
 }: ConteudosSectionProps) {
-  const cta = ctaLink ? (
-    <Link href={ctaLink} className="conteudos__cta">
-      {ctaLabel}
-    </Link>
-  ) : (
-    <span className="conteudos__cta">{ctaLabel}</span>
-  )
-
   return (
-    <section id="conteudos" className="section conteudos">
-      <div className="section__particles conteudos__particles" aria-hidden="true">
-        <div className="section__decor conteudos__decor--orange-tl" />
-        <div className="section__decor conteudos__decor--purple-top" />
-        <div className="section__decor conteudos__decor--red-bottom" />
-        <div className="section__decor conteudos__decor--orange-right" />
-      </div>
+    <section id="intro" className="section conteudos">
+      <ScrollParticles
+        className="section__particles conteudos__particles conteudos__particles--behind"
+        particles={CONTEUDOS_PARTICLES_BEHIND}
+      />
 
       <div className="conteudos__visual" aria-hidden={!mediaUrl}>
         <div className="circle-media">
@@ -65,7 +72,7 @@ export default function ConteudosSection({
                   src={mediaUrl}
                   mimeType={mediaMimeType}
                   className="conteudos__img"
-                  alt={mediaAlt || 'Conteúdos'}
+                  alt={mediaAlt || 'Intro'}
                 />
               ) : (
                 <Image
@@ -83,11 +90,15 @@ export default function ConteudosSection({
         </div>
       </div>
 
+      <ScrollParticles
+        className="section__particles conteudos__particles conteudos__particles--front"
+        particles={CONTEUDOS_PARTICLES_FRONT}
+      />
+
       <div className="conteudos__inner site-container">
         <div className="section__content conteudos__content">
           <h2>{renderHeadingText(title, DEFAULT_TITLE, {legacyStrongColor: 'green'})}</h2>
-          <p>{body || DEFAULT_BODY}</p>
-          {cta}
+          {renderBody(body || DEFAULT_BODY)}
         </div>
       </div>
     </section>

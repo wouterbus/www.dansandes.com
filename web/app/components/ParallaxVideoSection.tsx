@@ -9,7 +9,6 @@ import LoopingMedia from './LoopingMedia'
 
 type ParallaxVideoSectionProps = {
   title?: PortableTextBlock[]
-  body?: string
   videoUrl?: string
   videoMimeType?: string | null
   videoAlt?: string
@@ -20,12 +19,8 @@ const DEFAULT_TITLE = [
   {text: 'PARA CADA DESAFIO', accent: true, color: 'purple' as const},
 ]
 
-const DEFAULT_BODY =
-  'Somos parceiros de marcas, agências e produtoras para transformar ideias em histórias que viram conversa.'
-
 export default function ParallaxVideoSection({
   title,
-  body,
   videoUrl,
   videoMimeType,
   videoAlt,
@@ -74,10 +69,10 @@ export default function ParallaxVideoSection({
 
   return (
     <section
-      id="universos"
+      id="video-banner"
       ref={sectionRef}
       className="parallax-video"
-      aria-label="Universos criativos"
+      aria-label="Video Banner"
     >
       <div className="parallax-video__viewport">
         {videoUrl ? (
@@ -100,7 +95,6 @@ export default function ParallaxVideoSection({
       <div className="parallax-video__content site-container">
         <div className="section__content parallax-video__text">
           <h2>{renderHeadingText(title, DEFAULT_TITLE, {legacyStrongColor: 'purple'})}</h2>
-          <p>{body || DEFAULT_BODY}</p>
         </div>
       </div>
     </section>

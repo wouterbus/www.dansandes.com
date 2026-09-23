@@ -7,8 +7,8 @@ import produtosSandes from './single/produtosSandes'
 import produtoCard from './objects/produtoCard'
 import caseStudyItem from './objects/caseStudyItem'
 import casesSection from './single/casesSection'
+import footerSection from './single/footerSection'
 import partnerLogo from './documents/partnerLogo'
-import cases from './documents/cases'
 
 const schemas = [
   configuracoes,
@@ -20,8 +20,8 @@ const schemas = [
   produtoCard,
   caseStudyItem,
   casesSection,
+  footerSection,
   partnerLogo,
-  cases,
 ]
 
 export default schemas

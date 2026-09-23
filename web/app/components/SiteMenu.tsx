@@ -11,10 +11,10 @@ export type SiteMenuLink = {
 
 const DEFAULT_LINKS: SiteMenuLink[] = [
   {label: 'Início', href: '#inicio'},
-  {label: 'Conteúdos', href: '#conteudos'},
-  {label: 'Universos', href: '#universos'},
-  {label: 'Produtos', href: '#produtos'},
+  {label: 'Sobre a Sandes', href: '#intro'},
+  {label: 'Universos criativos', href: '#video-banner'},
   {label: 'Cases', href: '#cases'},
+  {label: 'Contato', href: '#contacto'},
 ]
 
 type SiteMenuProps = {
