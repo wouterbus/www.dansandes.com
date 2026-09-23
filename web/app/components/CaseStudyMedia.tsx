@@ -139,9 +139,19 @@ export function CaseVideoModal({
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     const video = videoRef.current
+    const startPlayback = () => {
+      // Safari treats a play() call after React has mounted the portal as
+      // programmatic. Muted inline playback is permitted on the first visit;
+      // viewers can still enable sound through the native controls.
+      if (!video) return
+      video.muted = true
+      void video.play().catch(() => {})
+    }
+
     if (video) {
       video.load()
-      void video.play().catch(() => {})
+      startPlayback()
+      video.addEventListener('canplay', startPlayback)
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -154,6 +164,7 @@ export function CaseVideoModal({
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKeyDown)
+      video?.removeEventListener('canplay', startPlayback)
     }
   }, [onClose, onPrev, onNext, videoUrl])
 
@@ -210,7 +221,9 @@ export function CaseVideoModal({
             src={videoUrl}
             controls
             autoPlay
+            muted
             playsInline
+            preload="auto"
           />
         </div>
 

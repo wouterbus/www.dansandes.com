@@ -41,6 +41,7 @@ type CaseStudyProps = {
 
 export default function CaseStudy({caseStudy, index = 0, onOpenVideo}: CaseStudyProps) {
   const [rowClickable, setRowClickable] = useState(false)
+  const [thumbUnsupported, setThumbUnsupported] = useState(false)
 
   const colorVar = brandColorVar(caseStudy.brandColor)
   const label = caseStudy.label ?? []
@@ -64,6 +65,12 @@ export default function CaseStudy({caseStudy, index = 0, onOpenVideo}: CaseStudy
     return () => query.removeEventListener('change', sync)
   }, [])
 
+  // A WebM thumbnail can be uploaded in Sanity, but older iPhones cannot
+  // decode every WebM codec. Use the case's PNG/JPG preview in that case.
+  useEffect(() => {
+    setThumbUnsupported(false)
+  }, [caseStudy.thumbUrl])
+
   const openVideo = useCallback(() => {
     if (hasPlayableVideo) onOpenVideo()
   }, [hasPlayableVideo, onOpenVideo])
@@ -82,13 +89,21 @@ export default function CaseStudy({caseStudy, index = 0, onOpenVideo}: CaseStudy
       {caseStudy.thumbUrl && (
         <div className="case-study__thumb">
           <div className="case-study__thumb-fill">
-            {isVideoMedia(caseStudy.thumbUrl, caseStudy.thumbMimeType) ||
+            {thumbUnsupported && caseStudy.videoPosterUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={caseStudy.videoPosterUrl}
+                alt={caseStudy.thumbAlt || ''}
+                className="case-study__thumb-media"
+              />
+            ) : isVideoMedia(caseStudy.thumbUrl, caseStudy.thumbMimeType) ||
             isGifMedia(caseStudy.thumbUrl, caseStudy.thumbMimeType) ? (
               <LoopingMedia
                 src={caseStudy.thumbUrl}
                 mimeType={caseStudy.thumbMimeType}
                 alt={caseStudy.thumbAlt || ''}
                 className="case-study__thumb-media"
+                onUnsupported={() => setThumbUnsupported(true)}
               />
             ) : (
               <Image
