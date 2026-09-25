@@ -1,11 +1,13 @@
 'use client'
 
-import {forwardRef, useEffect, useImperativeHandle, useRef, type Ref} from 'react'
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState, type Ref} from 'react'
 import {isGifMedia} from '../lib/isGifMedia'
 
 type LoopingMediaProps = {
   src: string
   mimeType?: string | null
+  mobileSrc?: string
+  mobileMimeType?: string | null
   className?: string
   alt?: string
   onPlay?: () => void
@@ -15,11 +17,24 @@ type LoopingMediaProps = {
 }
 
 const LoopingMedia = forwardRef(function LoopingMedia(
-  {src, mimeType, className, alt, onPlay, onPause, onUnsupported}: LoopingMediaProps,
+  {src, mimeType, mobileSrc, mobileMimeType, className, alt, onPlay, onPause, onUnsupported}: LoopingMediaProps,
   ref: Ref<HTMLVideoElement>,
 ) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [useMobileSource, setUseMobileSource] = useState(false)
   useImperativeHandle(ref, () => videoRef.current as HTMLVideoElement, [])
+
+  useEffect(() => {
+    if (!mobileSrc) return
+    const query = window.matchMedia('(max-width: 768px)')
+    const sync = () => setUseMobileSource(query.matches)
+    sync()
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
+  }, [mobileSrc])
+
+  const activeSrc = useMobileSource && mobileSrc ? mobileSrc : src
+  const activeMimeType = useMobileSource && mobileSrc ? mobileMimeType : mimeType
 
   const reportUnsupported = useRef(onUnsupported)
   reportUnsupported.current = onUnsupported
@@ -47,12 +62,12 @@ const LoopingMedia = forwardRef(function LoopingMedia(
       video.removeEventListener('loadedmetadata', check)
       video.removeEventListener('error', fail)
     }
-  }, [src])
+  }, [activeSrc])
 
-  if (isGifMedia(src, mimeType)) {
+  if (isGifMedia(activeSrc, activeMimeType)) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} className={className} alt={alt || ''} loading="eager" decoding="async" />
+      <img src={activeSrc} className={className} alt={alt || ''} loading="eager" decoding="async" />
     )
   }
 
@@ -60,7 +75,7 @@ const LoopingMedia = forwardRef(function LoopingMedia(
     <video
       ref={videoRef}
       className={className}
-      src={src}
+      src={activeSrc}
       autoPlay
       muted
       loop

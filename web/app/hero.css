@@ -120,6 +120,20 @@
   border: none;
 }
 
+/* Moves independently inside the clipped circular media as the Hero leaves
+   the viewport. The Hero content itself remains in normal document flow. */
+.hero__media-parallax {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__media-parallax {
+    transform: none !important;
+  }
+}
+
 .hero__decor--green {
   width: clamp(100px, 16vw, 180px);
   height: clamp(100px, 16vw, 180px);

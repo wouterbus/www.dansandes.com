@@ -13,6 +13,8 @@ type ConteudosSectionProps = {
   body?: string
   mediaUrl?: string
   mediaMimeType?: string | null
+  mobileMediaUrl?: string
+  mobileMediaMimeType?: string | null
   mediaAlt?: string
 }
 
@@ -49,6 +51,8 @@ export default function ConteudosSection({
   body,
   mediaUrl,
   mediaMimeType,
+  mobileMediaUrl,
+  mobileMediaMimeType,
   mediaAlt,
 }: ConteudosSectionProps) {
   return (
@@ -71,6 +75,8 @@ export default function ConteudosSection({
                 <LoopingMedia
                   src={mediaUrl}
                   mimeType={mediaMimeType}
+                  mobileSrc={mobileMediaUrl}
+                  mobileMimeType={mobileMediaMimeType}
                   className="conteudos__img"
                   alt={mediaAlt || 'Intro'}
                 />

@@ -17,6 +17,8 @@ export type CaseStudyData = {
   internalName?: string
   thumbUrl?: string
   thumbMimeType?: string | null
+  thumbMobileUrl?: string
+  thumbMobileMimeType?: string | null
   thumbAlt?: string
   label?: string[]
   headline?: string
@@ -101,6 +103,8 @@ export default function CaseStudy({caseStudy, index = 0, onOpenVideo}: CaseStudy
               <LoopingMedia
                 src={caseStudy.thumbUrl}
                 mimeType={caseStudy.thumbMimeType}
+                mobileSrc={caseStudy.thumbMobileUrl}
+                mobileMimeType={caseStudy.thumbMobileMimeType}
                 alt={caseStudy.thumbAlt || ''}
                 className="case-study__thumb-media"
                 onUnsupported={() => setThumbUnsupported(true)}
@@ -120,9 +124,9 @@ export default function CaseStudy({caseStudy, index = 0, onOpenVideo}: CaseStudy
               <Image
                 src={caseStudy.clientLogoUrl}
                 alt={caseStudy.clientLogoAlt || ''}
-                width={104}
-                height={104}
-                sizes="104px"
+                width={120}
+                height={120}
+                sizes="(max-width: 1080px) 152px, 120px"
                 className="case-study__client-logo-img"
               />
             </div>

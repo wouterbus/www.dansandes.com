@@ -174,7 +174,7 @@ export default function WhatsAppFloat() {
         aria-hidden={!open}
         role="dialog"
         aria-modal="false"
-        aria-label="Fale com a Sandes"
+        aria-label="Fala com a Sandes"
       >
         <header className="wa-float__header">
           <span
@@ -186,7 +186,7 @@ export default function WhatsAppFloat() {
 
           <div className="wa-float__header-text">
             <p className="wa-float__name">
-              Fale com a Sandes
+              Fala com a Sandes
             </p>
 
             <p className="wa-float__status">

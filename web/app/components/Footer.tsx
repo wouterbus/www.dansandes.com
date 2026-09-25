@@ -7,8 +7,9 @@ import CreatorCredit from './CreatorCredit'
 import {whatsappUrl} from '../lib/whatsapp'
 
 const WHATSAPP_URL = whatsappUrl('Olá! Vim pelo site da Sandes. Podemos marcar uma conversa?')
-const DEFAULT_EMAIL = 'ola@criasandes.com'
+const DEFAULT_EMAIL = 'dan@dansandes.com'
 const DEFAULT_INSTAGRAM_URL = 'https://www.instagram.com/criasandes'
+const DEFAULT_LINKEDIN_URL = 'https://www.linkedin.com/in/daniel-sandes/'
 const DEFAULT_LOGO = '/logo/secondary-logo.svg'
 const COPY_TOOLTIP_MS = 1800
 
@@ -18,6 +19,7 @@ export type FooterProps = {
   logoUrl?: string
   logoAlt?: string
   instagramUrl?: string
+  linkedinUrl?: string
   email?: string
 }
 
@@ -30,11 +32,13 @@ export default function Footer({
   logoUrl,
   logoAlt,
   instagramUrl,
+  linkedinUrl,
   email,
 }: FooterProps) {
   const year = new Date().getFullYear()
   const resolvedEmail = email?.trim() || DEFAULT_EMAIL
   const resolvedInstagram = instagramUrl?.trim() || DEFAULT_INSTAGRAM_URL
+  const resolvedLinkedin = linkedinUrl?.trim() || DEFAULT_LINKEDIN_URL
   const resolvedLogo = logoUrl || DEFAULT_LOGO
   const resolvedBody = body?.trim() || DEFAULT_BODY
 
@@ -82,7 +86,7 @@ export default function Footer({
               />
             </Link>
           </div>
-                      <div className="site-footer__social">
+          <div className="site-footer__social">
               <a
                 href={resolvedInstagram}
                 className="site-footer__social-link"
@@ -93,6 +97,18 @@ export default function Footer({
               >
                 <InstagramIcon />
               </a>
+              {resolvedLinkedin && (
+                <a
+                  href={resolvedLinkedin}
+                  className="site-footer__social-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  data-cursor="link"
+                >
+                  <LinkedInIcon />
+                </a>
+              )}
               <EmailCopyButton email={resolvedEmail} />
             </div>
         </div>
@@ -184,6 +200,14 @@ function InstagramIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+    </svg>
+  )
+}
+
+function LinkedInIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V8.98h3.42v1.57h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.3zM5.32 7.41a2.07 2.07 0 110-4.14 2.07 2.07 0 010 4.14zm1.78 13.04H3.54V8.98H7.1v11.47zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
     </svg>
   )
 }

@@ -43,6 +43,18 @@ function withCommaBreaks(text: string): ReactNode {
   ))
 }
 
+/** Newlines from Sanity's Shift+Enter are intentional editorial line breaks. */
+function withManualBreaks(text: string, breakAfterComma: boolean): ReactNode {
+  const lines = text.split('\n')
+
+  return lines.map((line, index) => (
+    <Fragment key={index}>
+      {breakAfterComma ? withCommaBreaks(line) : line}
+      {index < lines.length - 1 && <br />}
+    </Fragment>
+  ))
+}
+
 export function renderHeadingText(
   blocks: PortableTextBlock[] | undefined,
   defaults: DefaultPart[],
@@ -53,8 +65,7 @@ export function renderHeadingText(
   const markDefs = block?.markDefs ?? []
   const legacyColor = options.legacyStrongColor ?? 'orange'
   const emphasisClassName = options.emphasisClassName
-  const renderText = (text: string): ReactNode =>
-    options.breakAfterComma ? withCommaBreaks(text) : text
+  const renderText = (text: string): ReactNode => withManualBreaks(text, Boolean(options.breakAfterComma))
 
   if (!children?.length) {
     return defaults.map((part, i) => (

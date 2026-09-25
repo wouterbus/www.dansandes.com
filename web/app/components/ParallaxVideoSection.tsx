@@ -11,6 +11,8 @@ type ParallaxVideoSectionProps = {
   title?: PortableTextBlock[]
   videoUrl?: string
   videoMimeType?: string | null
+  mobileVideoUrl?: string
+  mobileVideoMimeType?: string | null
   videoAlt?: string
 }
 
@@ -23,31 +25,41 @@ export default function ParallaxVideoSection({
   title,
   videoUrl,
   videoMimeType,
+  mobileVideoUrl,
+  mobileVideoMimeType,
   videoAlt,
 }: ParallaxVideoSectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const mediaRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const section = sectionRef.current
     const media = mediaRef.current
-    if (!section || !media) return
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reducedMotion) return
-
+    const viewport = viewportRef.current
+    if (!section || !media || !viewport) return
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
     let frame = 0
-
     const update = () => {
       const rect = section.getBoundingClientRect()
-      const viewportH = window.innerHeight
-      const total = rect.height + viewportH
-      const progress = (viewportH - rect.top) / total
-      const clamped = Math.min(1, Math.max(0, progress))
-      const offset = (clamped - 0.5) * 18
-      media.style.transform = `translate3d(0, ${offset}%, 0) scale(1.12)`
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return
+      // Counter the section's document movement: the video stays visually
+      // anchored to the viewport while the section's mask passes across it.
+      media.style.transform = `translate3d(0, ${motion.matches ? 0 : -rect.top}px, 0)`
     }
-
+    const measure = () => {
+      const asset = media.querySelector('video, img')
+      const width = asset instanceof HTMLVideoElement ? asset.videoWidth : asset instanceof HTMLImageElement ? asset.naturalWidth : 0
+      const height = asset instanceof HTMLVideoElement ? asset.videoHeight : asset instanceof HTMLImageElement ? asset.naturalHeight : 0
+      if (!width || !height) return
+      // The video fills the screen behind the smaller, original banner mask.
+      // Preserve its proportions; never stretch it into the mask's dimensions.
+      const windowHeight = motion.matches ? viewport.getBoundingClientRect().height : window.innerHeight
+      const renderedWidth = Math.max(section.clientWidth, windowHeight * width / height)
+      media.style.width = `${renderedWidth}px`
+      media.style.left = `${(section.clientWidth - renderedWidth) / 2}px`
+      update()
+    }
     const onScroll = () => {
       if (frame) return
       frame = window.requestAnimationFrame(() => {
@@ -56,13 +68,23 @@ export default function ParallaxVideoSection({
       })
     }
 
-    update()
+    const observer = new ResizeObserver(measure)
+    observer.observe(viewport)
+    observer.observe(media)
+    media.addEventListener('loadedmetadata', measure, true)
+    media.addEventListener('load', measure, true)
+    motion.addEventListener('change', measure)
+    measure()
     window.addEventListener('scroll', onScroll, {passive: true})
-    window.addEventListener('resize', onScroll)
+    window.addEventListener('resize', measure)
 
     return () => {
       window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
+      window.removeEventListener('resize', measure)
+      observer.disconnect()
+      media.removeEventListener('loadedmetadata', measure, true)
+      media.removeEventListener('load', measure, true)
+      motion.removeEventListener('change', measure)
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [])
@@ -74,6 +96,7 @@ export default function ParallaxVideoSection({
       className="parallax-video"
       aria-label="Video Banner"
     >
+      <div ref={viewportRef} className="parallax-video__sticky">
       <div className="parallax-video__viewport">
         {videoUrl ? (
           <div ref={mediaRef} className="parallax-video__media">
@@ -81,6 +104,8 @@ export default function ParallaxVideoSection({
               className="parallax-video__video"
               src={videoUrl}
               mimeType={videoMimeType}
+              mobileSrc={mobileVideoUrl}
+              mobileMimeType={mobileVideoMimeType}
               alt={videoAlt || 'Background video'}
             />
           </div>
@@ -97,6 +122,21 @@ export default function ParallaxVideoSection({
           <h2>{renderHeadingText(title, DEFAULT_TITLE, {legacyStrongColor: 'purple'})}</h2>
         </div>
       </div>
+      </div>
+      <style jsx global>{`
+        #video-banner.parallax-video { --video-window-height: min(68svh, 620px); height: var(--video-window-height); min-height: 0; overflow: hidden; }
+        #video-banner .parallax-video__sticky { position: relative; height: var(--video-window-height); overflow: hidden; }
+        #video-banner .parallax-video__media { inset: auto; top: 0; left: 0; width: 100%; height: auto; will-change: transform; }
+        #video-banner .parallax-video__video { width: 100%; height: auto; object-fit: contain; display: block; }
+        #video-banner .parallax-video__media--empty { height: 100%; }
+        @media (max-width: 960px) {
+          #video-banner.parallax-video { --video-window-height: min(46svh, 360px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          #video-banner .parallax-video__sticky { position: relative; height: 100%; }
+          #video-banner .parallax-video__media { transform: none !important; }
+        }
+      `}</style>
     </section>
   )
 }

@@ -17,7 +17,8 @@
 
 .parallax-video__media {
   position: absolute;
-  inset: -12% 0;
+  /* Extra bleed absorbs the scroll-linked transform without exposing an edge. */
+  inset: -18% 0;
   will-change: transform;
 }
 
@@ -64,7 +65,7 @@
   }
 
   .parallax-video__media {
-    inset: -8% 0;
+    inset: -14% 0;
   }
 
   .parallax-video__content {

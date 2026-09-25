@@ -13,6 +13,8 @@ type HeroProps = {
   awardsAlt?: string
   videoUrl?: string
   videoMimeType?: string | null
+  mobileVideoUrl?: string
+  mobileVideoMimeType?: string | null
   videoAlt?: string
 }
 
@@ -27,6 +29,8 @@ export default function Hero({
   awardsAlt,
   videoUrl,
   videoMimeType,
+  mobileVideoUrl,
+  mobileVideoMimeType,
   videoAlt,
 }: HeroProps) {
   return (
@@ -51,7 +55,7 @@ export default function Hero({
 
       <div className="hero__visual" aria-hidden={!videoUrl}>
         {videoUrl ? (
-          <HeroVideo videoUrl={videoUrl} videoMimeType={videoMimeType} alt={videoAlt} />
+          <HeroVideo videoUrl={videoUrl} videoMimeType={videoMimeType} mobileVideoUrl={mobileVideoUrl} mobileVideoMimeType={mobileVideoMimeType} alt={videoAlt} />
         ) : (
           <div className="circle-media">
             <div className="circle-media__ring" aria-hidden="true" />

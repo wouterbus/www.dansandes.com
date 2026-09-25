@@ -35,12 +35,14 @@ async function getData() {
       title,
       awards{asset->{url}, alt},
       video{asset->{url, mimeType}},
+      mobileVideo{asset->{url, mimeType}},
       alt
     }`),
     client.fetch(groq`*[_type=='conteudosSection'][0]{
       title,
       body,
       media{asset->{url, mimeType}, alt},
+      mobileMedia{asset->{url, mimeType}},
       image{asset->{url, mimeType}, alt}
     }`),
     client.fetch(groq`*[_type=='logoCarousel'][0]{
@@ -52,6 +54,7 @@ async function getData() {
     client.fetch(groq`*[_type=='universosSection'][0]{
       title,
       video{asset->{url, mimeType}},
+      mobileVideo{asset->{url, mimeType}},
       videoAlt
     }`),
     client.fetch(groq`*[_type=='produtosSandes'][0]{
@@ -83,6 +86,7 @@ async function getData() {
         video{asset->{url, mimeType}, alt},
         videoPoster{asset->{url, mimeType}},
         thumb{asset->{url, mimeType}, alt},
+        thumbMobile{asset->{url, mimeType}},
         clientLogo->{
           name,
           image{asset->{url}, alt}
@@ -95,6 +99,7 @@ async function getData() {
       body,
       logo{asset->{url}, alt},
       instagramUrl,
+      linkedinUrl,
       email
     }`),
   ])
@@ -169,6 +174,7 @@ function mapCaseStudies(
     video?: {asset?: {url?: string; mimeType?: string}; alt?: string}
     videoPoster?: {asset?: {url?: string; mimeType?: string}}
     thumb?: {asset?: {url?: string; mimeType?: string}; alt?: string}
+    thumbMobile?: {asset?: {url?: string; mimeType?: string}}
     clientLogo?: {
       name?: string
       image?: {asset?: {url?: string}; alt?: string}
@@ -198,6 +204,8 @@ function mapCaseStudies(
       videoPosterMimeType: item.videoPoster?.asset?.mimeType,
       thumbUrl: item.thumb?.asset?.url,
       thumbMimeType: item.thumb?.asset?.mimeType,
+      thumbMobileUrl: item.thumbMobile?.asset?.url,
+      thumbMobileMimeType: item.thumbMobile?.asset?.mimeType,
       thumbAlt: item.thumb?.alt,
       clientLogoUrl: customUrl || gridUrl,
       clientLogoAlt:
@@ -232,6 +240,8 @@ export default async function HomePage() {
         awardsAlt={heroBanner?.awards?.alt}
         videoUrl={heroBanner?.video?.asset?.url}
         videoMimeType={heroBanner?.video?.asset?.mimeType}
+        mobileVideoUrl={heroBanner?.mobileVideo?.asset?.url}
+        mobileVideoMimeType={heroBanner?.mobileVideo?.asset?.mimeType}
         videoAlt={heroBanner?.alt}
       />
 
@@ -242,6 +252,8 @@ export default async function HomePage() {
         mediaMimeType={
           conteudosSection?.media?.asset?.mimeType ?? conteudosSection?.image?.asset?.mimeType
         }
+        mobileMediaUrl={conteudosSection?.mobileMedia?.asset?.url}
+        mobileMediaMimeType={conteudosSection?.mobileMedia?.asset?.mimeType}
         mediaAlt={conteudosSection?.media?.alt ?? conteudosSection?.image?.alt}
       />
 
@@ -258,6 +270,8 @@ export default async function HomePage() {
         title={universosSection?.title}
         videoUrl={universosSection?.video?.asset?.url}
         videoMimeType={universosSection?.video?.asset?.mimeType}
+        mobileVideoUrl={universosSection?.mobileVideo?.asset?.url}
+        mobileVideoMimeType={universosSection?.mobileVideo?.asset?.mimeType}
         videoAlt={universosSection?.videoAlt}
       />
 
@@ -274,6 +288,7 @@ export default async function HomePage() {
         logoUrl={footerSection?.logo?.asset?.url}
         logoAlt={footerSection?.logo?.alt}
         instagramUrl={footerSection?.instagramUrl}
+        linkedinUrl={footerSection?.linkedinUrl}
         email={footerSection?.email}
       />
     </>
