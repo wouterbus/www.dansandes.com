@@ -10,7 +10,7 @@ export default defineType({
       name: 'title',
       title: 'Título da secção',
       description:
-        'Selecione o texto → “Cor de destaque” para colorir parte do título. Ex.: “Quando a história é boa,” + “a marca faz parte da conversa”.',
+        'Selecione o texto → “Cor de destaque” para colorir parte do título. Use Shift+Enter para uma quebra de linha. Ex.: “Quando a história é boa,” + “a marca faz parte da conversa”.',
       ...headingTextField,
     },
     {

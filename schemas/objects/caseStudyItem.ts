@@ -38,6 +38,15 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     },
     {
+      name: 'thumbMobile',
+      title: 'Miniatura animada alternativa para mobile',
+      type: 'file',
+      group: 'media',
+      options: videoOrGifFileOptions,
+      description: 'Opcional. MP4, WebM ou GIF usado somente em mobile no lugar da Miniatura animada.',
+      validation: (Rule) => webPlayableVideo(Rule),
+    },
+    {
       name: 'clientLogo',
       title: 'Logo do cliente (Logo Grid)',
       type: 'reference',

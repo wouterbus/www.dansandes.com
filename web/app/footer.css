@@ -23,9 +23,8 @@
 }
 
 .site-footer__heading {
-  display: flex;
-  flex-direction: column;
-  gap: 0.08em;
+  /* Sanity spans are inline color runs, not separate heading lines. */
+  display: block;
   margin: 0 0 clamp(16px, 2.5vh, 24px);
   font-family: var(--font-title), sans-serif;
   font-size: clamp(1.75rem, 3.4vw, 2.75rem);
@@ -231,6 +230,13 @@ align-items: flex-end;
 
   .site-footer__social {
     justify-content: flex-start;
+  }
+
+  .site-footer__footer {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    margin-top: 28px;
+    gap: 80px;
   }
 
   .site-footer__bar {

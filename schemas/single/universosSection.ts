@@ -21,6 +21,14 @@ export default defineType({
       validation: (Rule) => [Rule.required(), webPlayableVideo(Rule)],
     },
     {
+      name: 'mobileVideo',
+      title: 'Vídeo ou GIF alternativo para mobile',
+      type: 'file',
+      options: videoOrGifFileOptions,
+      description: 'Opcional. Usado apenas em mobile; mantém o parallax sutil do banner.',
+      validation: (Rule) => webPlayableVideo(Rule),
+    },
+    {
       name: 'videoAlt',
       title: 'Video Alt Text',
       type: 'string',

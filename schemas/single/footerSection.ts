@@ -11,7 +11,7 @@ export default defineType({
       title: 'Título',
       ...headingTextField,
       description:
-        'Use Highlight color (amarelo/laranja) na parte que deve aparecer colorida — ex.: “tem para contar?”.',
+        'Use Highlight color (amarelo/laranja) na parte que deve aparecer colorida — ex.: “tem para contar?”. Use Shift+Enter para uma quebra de linha no título.',
       validation: (Rule) => Rule.required(),
     },
     {
@@ -44,6 +44,14 @@ export default defineType({
         Rule.uri({scheme: ['http', 'https']}).error('Informe uma URL válida (https://…).'),
     },
     {
+      name: 'linkedinUrl',
+      title: 'LinkedIn',
+      type: 'url',
+      description: 'URL completa do perfil ou página — ex.: https://www.linkedin.com/company/sandes',
+      validation: (Rule) =>
+        Rule.uri({scheme: ['http', 'https']}).error('Informe uma URL válida (https://…).'),
+    },
+    {
       name: 'email',
       title: 'E-mail',
       type: 'string',
@@ -54,7 +62,7 @@ export default defineType({
           if (typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
             return true
           }
-          return 'Informe um e-mail válido — ex.: ola@criasandes.com'
+          return 'Informe um e-mail válido — ex.: dan@dansandes.com'
         }),
     },
   ],

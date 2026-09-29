@@ -1,6 +1,6 @@
 import {defineType} from 'sanity'
 import {headingTextField} from '../fields/headingText'
-import {imageOrVideoFileOptions} from '../fields/videoOrGifFile'
+import {imageOrVideoFileOptions, videoOrGifFileOptions, webPlayableVideo} from '../fields/videoOrGifFile'
 
 export default defineType({
   name: 'conteudosSection',
@@ -40,6 +40,14 @@ export default defineType({
           description: 'Descreva o conteúdo visual para acessibilidade.',
         },
       ],
+    },
+    {
+      name: 'mobileMedia',
+      title: 'Vídeo ou GIF alternativo para mobile',
+      type: 'file',
+      options: videoOrGifFileOptions,
+      description: 'Opcional. Usado apenas em mobile quando a mídia principal é animada.',
+      validation: (Rule) => webPlayableVideo(Rule),
     },
   ],
   preview: {

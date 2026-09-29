@@ -56,6 +56,8 @@ export default function WhatsAppFloat() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return
+        // Mobile/tablet visitors open the chat only by tapping its button.
+        if (!window.matchMedia('(min-width: 1081px)').matches) return
         if (autoOpenedRef.current) return
 
         autoOpenedRef.current = true

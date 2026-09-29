@@ -35,6 +35,14 @@ export default defineType({
       validation: (Rule) => [Rule.required(), webPlayableVideo(Rule)],
     },
     {
+      name: 'mobileVideo',
+      title: 'Vídeo ou GIF alternativo para mobile',
+      type: 'file',
+      options: videoOrGifFileOptions,
+      description: 'Opcional. Usado apenas em mobile; ideal para um ficheiro menor ou com enquadramento vertical.',
+      validation: (Rule) => webPlayableVideo(Rule),
+    },
+    {
       name: 'alt',
       title: 'Texto alternativo do vídeo',
       type: 'string',
